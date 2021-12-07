@@ -1,42 +1,65 @@
-import os
-from flask import Flask, render_template, flash, redirect
-from src.forms import AddForm, InferForm
+from flask import Flask, jsonify, request
+from flask_restful import Api
+from flask_cors import CORS
+
+from src.interface import Interface
 
 app = Flask(__name__)
-SECRET_KEY = os.urandom(32)
-app.config['SECRET_KEY'] = SECRET_KEY
+CORS(app)
+api = Api(app)
+
+interface = Interface()
 
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route("/api/start")
+def start():
+    pass
 
 
-@app.route("/train")
+@app.route("/api/train")
 def train():
-    return render_template("train.html")
+    print(request.json)
+    response = {
+        'success': 'OK',
+        'message': 'Model trained correctly with accuracy of 95.6%'
+    }
+    return jsonify(response)
 
 
-@app.route("/add", methods=['GET', 'POST'])
+@app.route("/api/add", methods=['OPTIONS', 'POST'])
 def add():
-    form = AddForm()
-    if form.validate_on_submit():
-        flash('Adding <{},{}>'.format(
-            form.x.data, form.y.data))
-        return redirect("/")
-    return render_template('add.html', title='Add Data', form=form)
+    print(request.json)
+    response = {
+        'success': 'OK',
+        'message': 'Data pair <x:y> added correctly'
+    }
+    return jsonify(response)
 
 
-@app.route("/list")
+@app.route("/api/list")
 def list():
-    return render_template("list.html")
+    data = [
+        {'x': 'a', 'y': '2'},
+        {'x': 'b', 'y': '4'},
+        {'x': 'c', 'y': '6'}
+    ]
+    response = {
+        'success': 'OK',
+        'data': data
+    }
+    return jsonify(response)
 
 
-@app.route("/infer", methods=['GET', 'POST'])
+@app.route("/api/infer", methods=['GET', 'POST'])
 def infer():
-    form = InferForm()
-    if form.validate_on_submit():
-        flash('Getting <{}>'.format(
-            form.x.data))
-        return redirect("/")
-    return render_template('infer.html', title='Infer Data', form=form)
+    result = 1
+    response = {
+        'success': 'OK',
+        'data': result
+    }
+    return jsonify(response)
+
+
+if __name__ == '__main__':
+    pass
+
