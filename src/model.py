@@ -29,12 +29,11 @@ class Model:
             self.build_model()
             self.train_model()
             self.save_model()
-            print(e)
 
     def load_data(self, src='csv'):
         if src == 'csv':
-            data_train = pd.read_csv('../data/train.csv')
-            data_test = pd.read_csv('../data/test.csv')
+            data_train = pd.read_csv('./data/train.csv')
+            data_test = pd.read_csv('./data/test.csv')
 
             self.data_train = data_train.dropna()
             self.data_test = data_test.dropna()
@@ -69,14 +68,18 @@ class Model:
         self.model.fit(self.x_train, self.y_train, validation_data=(self.x_test, self.y_test), epochs=100, verbose=1,
                        callbacks=[early_stop])
 
-    def predict(self):
-        y_predict = self.model(self.x_test)
+    def predict(self, x=None):
+        if x is None:
+            x = self.x_test
+        y_predict = self.model(x)
+        y = tf.get_static_value(y_predict)
+        return y[0][0]
 
     def save_model(self):
-        self.model.save("../output/simple_model")
+        self.model.save("./output/simple_model")
 
     def load_model(self):
-        self.model = keras.models.load_model("../output/simple_model")
+        self.model = keras.models.load_model("./output/simple_model")
 
     def delete_model(self):
         pass

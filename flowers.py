@@ -52,11 +52,7 @@ def list():
 
 @app.route("/api/infer", methods=['GET', 'POST'])
 def infer():
-    result = 1
-    response = {
-        'success': 'OK',
-        'data': result
-    }
+    response = interface.on_infer(request.json['infer_x'])
     return jsonify(response)
 
 
