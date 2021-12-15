@@ -9,6 +9,8 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.losses import MSE
 from tensorflow.keras.callbacks import EarlyStopping
 
+from orm.data import get_dataset, populate_db
+
 
 class Model:
     def __init__(self):
@@ -19,8 +21,14 @@ class Model:
         self.y_train = None
         self.x_test = None
         self.y_test = None
+        self.history = None
 
-        self.load_data(src='csv')
+        try:
+            self.load_data()
+        except Exception as e:
+            populate_db()
+            self.load_data()
+
         self.preprocess_data()
 
         try:
@@ -29,23 +37,27 @@ class Model:
             self.build_model()
             self.train_model()
             self.save_model()
-            print(e)
 
-    def load_data(self, src='csv'):
+    def load_data(self, src='sql'):
         if src == 'csv':
-            data_train = pd.read_csv('../data/train.csv')
-            data_test = pd.read_csv('../data/test.csv')
-
+            data_train = pd.read_csv('./data/train.csv')
+            data_test = pd.read_csv('./data/test.csv')
             self.data_train = data_train.dropna()
             self.data_test = data_test.dropna()
 
-            self.x_train = self.data_train['x']
-            self.y_train = self.data_train['y']
-
-            self.x_test = self.data_test['x']
-            self.y_test = self.data_test['y']
         if src == 'sql':
-            pass
+            self.data_train = get_dataset(train=True)
+            self.data_test = get_dataset(train=False)
+            if not len(self.data_test) and not len(self.data_train):
+                populate_db()
+                self.data_train = get_dataset(train=True)
+                self.data_test = get_dataset(train=False)
+
+        self.x_train = self.data_train['x']
+        self.y_train = self.data_train['y']
+
+        self.x_test = self.data_test['x']
+        self.y_test = self.data_test['y']
 
     def preprocess_data(self):
         scaler = MinMaxScaler()
@@ -62,27 +74,30 @@ class Model:
             learning_rate=0.1,
             name='SGD',
             nesterov=True
-        ), loss=MSE)
+        ), loss=MSE, metrics=['accuracy'])
 
     def train_model(self):
         early_stop = EarlyStopping(mode='min', monitor='val_loss', patience=50, verbose=1)
-        self.model.fit(self.x_train, self.y_train, validation_data=(self.x_test, self.y_test), epochs=100, verbose=1,
-                       callbacks=[early_stop])
+        self.history = self.model.fit(self.x_train, self.y_train, validation_data=(self.x_test, self.y_test),
+                                      epochs=100, verbose=1, callbacks=[early_stop])
 
-    def predict(self):
-        y_predict = self.model(self.x_test)
+    def predict(self, x=None):
+        if x is None:
+            x = self.x_test
+        y_predict = self.model(x)
+        y = tf.get_static_value(y_predict)
+        return y[0][0]
+
+    def get_metrics(self):
+        return self.history.history['loss'][-1], self.history.history['accuracy'][-1]
 
     def save_model(self):
-        self.model.save("../output/simple_model")
+        self.model.save("./output/simple_model")
 
     def load_model(self):
-        self.model = keras.models.load_model("../output/simple_model")
-
-    def delete_model(self):
-        pass
+        self.model = keras.models.load_model("./output/simple_model")
 
 
 if __name__ == '__main__':
     tf.keras.backend.clear_session()
     m = Model()
-    m.predict()

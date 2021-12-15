@@ -6,57 +6,37 @@ from src.interface import Interface
 
 app = Flask(__name__)
 CORS(app)
-api = Api(app)
 
 interface = Interface()
 
 
-@app.route("/api/start")
-def start():
-    pass
-
-
 @app.route("/api/train")
 def train():
-    print(request.json)
-    response = {
-        'success': 'OK',
-        'message': 'Model trained correctly with accuracy of 95.6%'
-    }
+    response = interface.on_train()
     return jsonify(response)
 
 
 @app.route("/api/add", methods=['OPTIONS', 'POST'])
 def add():
-    print(request.json)
-    response = {
-        'success': 'OK',
-        'message': 'Data pair <x:y> added correctly'
-    }
+    data = request.get_json(force=True)
+    x = data.get("add_x")
+    y = data.get("add_y")
+    use = data.get("data_use")
+    response = interface.on_add(x=x, y=y, use=use)
     return jsonify(response)
 
 
 @app.route("/api/list")
 def list():
-    data = [
-        {'x': 'a', 'y': '2'},
-        {'x': 'b', 'y': '4'},
-        {'x': 'c', 'y': '6'}
-    ]
-    response = {
-        'success': 'OK',
-        'data': data
-    }
+    response = interface.on_list()
     return jsonify(response)
 
 
-@app.route("/api/infer", methods=['GET', 'POST'])
+@app.route("/api/infer", methods=['OPTIONS', 'POST'])
 def infer():
-    result = 1
-    response = {
-        'success': 'OK',
-        'data': result
-    }
+    data = request.get_json(force=True)
+    x = data.get("infer_x")
+    response = interface.on_infer(x=x)
     return jsonify(response)
 
 

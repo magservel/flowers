@@ -24,7 +24,8 @@ Etapes:
    2. Créer une page d'accueil avec un formulaire pour entrer x et appeler la route d'inférence. Le résultat (y) sera ensuite affiché.
    3. Créer une page avec un formulaire pour entrer x et y et les ajouter à la base (route d'ajout).
    4. Créer une page qui permet de lister les exemples dans la base (route de listing).
-   5. Ajouter un bouton qui appelle l'entraînement du modèle (route d'entraînement) sur la précédente page.
+   5. Ajouter un bouton qui appelle l'entraînement du mod
+      èle (route d'entraînement) sur la précédente page.
 3. Créer le modèle
    1. Créer un réseau de neurones (l'architecture n'a pas d'importance, un réseau feedforward est suffisant) en Python (e.g. Tensorflow, Keras, PyTorch).
    2. L'initialiser au démarrage de l'API REST Flask.
