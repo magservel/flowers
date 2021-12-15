@@ -7,6 +7,7 @@ from orm.data import add_data
 class Interface:
     def __init__(self):
         self.m = Model()
+        pass
 
     def on_train(self):
         response = {}
@@ -37,6 +38,7 @@ class Interface:
                         .format(x, y, ['TEST', 'TRAIN'][train])}
         return response
 
+
     def on_list(self):
         response = {}
         try:
@@ -63,3 +65,4 @@ class Interface:
         else:
             response = {'success': 'OK', 'message': 'null', 'data': str(y)}
         return response
+

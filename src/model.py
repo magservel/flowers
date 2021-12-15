@@ -42,6 +42,7 @@ class Model:
         if src == 'csv':
             data_train = pd.read_csv('./data/train.csv')
             data_test = pd.read_csv('./data/test.csv')
+
             self.data_train = data_train.dropna()
             self.data_test = data_test.dropna()
 
@@ -90,6 +91,7 @@ class Model:
 
     def get_metrics(self):
         return self.history.history['loss'][-1], self.history.history['accuracy'][-1]
+
 
     def save_model(self):
         self.model.save("./output/simple_model")

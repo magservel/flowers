@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import csv
 import pandas as pd
+
 Base = declarative_base()
 
 
@@ -45,12 +46,14 @@ def add_data(x, y, train):
 def populate_db():
     engine = create_engine("sqlite:///sql/data.db")
     Base.metadata.create_all(engine)
+
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
 
     try:
         file_name = "./data/train.csv"
+
         with open(file_name, 'r') as file:
             data = csv.DictReader(file)
 
