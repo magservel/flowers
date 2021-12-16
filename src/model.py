@@ -92,7 +92,6 @@ class Model:
     def get_metrics(self):
         return self.history.history['loss'][-1], self.history.history['accuracy'][-1]
 
-
     def save_model(self):
         self.model.save("./output/simple_model")
 

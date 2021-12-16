@@ -1,4 +1,27 @@
-Objectif:
+## Start API server
+
+```buildoutcfg
+git clone https://github.com/magservel/flowers.git
+cd flowers
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+mkdir output
+mkdir sql
+chmod +x init.sh
+./init.sh
+```
+## Folder organisation
+- `data/`: Contient deux sets de données un `test` l'autre `train`. Ces données, issues du site kaggle.com, ont été générées aléatoirement
+- `orm/`: contient les fichiers python de gestion de la base de données
+- `output/`: contient une sauvegarde du modèle générée automatiquement par keras
+- `sql/`: contient les fichiers sql
+- `src/`: contient le modèle et l'interface pour communiquer avec.
+
+
+
+##Objectif:
 Construire une application Angular qui intéragit avec un modèle de Deep Learning. L'application doit permettre les choses suivantes:
 - Via une page d'accueil, pouvoir utiliser le modèle pour prédire une nouvelle donnée
 - Via une page d'ajout avec un formulaire, ajouter des données à un dataset
